@@ -29,7 +29,6 @@ public class Room implements RoomInterface {
         this.hotel = hotel;
         hold = false;
     }
-    // sets the room te be taken on the dates from check in to check out:
     public void reserve(MyDate checkIn, MyDate checkOut)
             throws RoomTakenException {
         MyDate date = checkIn;
@@ -64,13 +63,11 @@ public class Room implements RoomInterface {
     public ArrayList<MyDate> getDates() {
         return dates;
     }
-    // sets the room taken on given date
     public void addDate(MyDate date) {
         if(!this.dates.contains(date)) {
             this.dates.add(date);
         }
     }
-    // sets the room available on given date
     public void removeDate(MyDate date)
             throws NoSuchReservationException {
         if(!this.dates.remove(date))
@@ -101,6 +98,12 @@ public class Room implements RoomInterface {
     public Hotel getHotel() {
         return hotel;
     }
+    public boolean isOnHold() {
+        return hold;
+    }
+    public void setHold(boolean hold){
+        this.hold = hold;
+    }
     public String toString(){
         StringBuilder str = new StringBuilder("room number "+roomNumber+", price per night: "+price+", ");
         if(beds==1) str.append("1 bed");
@@ -109,12 +112,5 @@ public class Room implements RoomInterface {
             str.append(", ").append(a.getName());
         }
         return str.toString();
-    }
-
-    public boolean isOnHold() {
-        return hold;
-    }
-    public void setHold(boolean hold){
-        this.hold = hold;
     }
 }

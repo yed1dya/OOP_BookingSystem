@@ -8,6 +8,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface RoomInterface {
+    /**
+     * sets the room te be taken on the dates from check in to check out
+     * @param checkIn check in date
+     * @param checkOut check out date
+     * @throws RoomTakenException if room is already taken
+     */
     void reserve(MyDate checkIn, MyDate checkOut)
             throws RoomTakenException;
     double getPrice();

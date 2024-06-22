@@ -17,7 +17,6 @@ public abstract class RoomAmenity {
         }
         amenityList.add(this);
     }
-
     public static ArrayList<RoomAmenity> getAmenityList() {
         return amenityList;
     }

@@ -1,7 +1,6 @@
 package users;
 
 import database.Database;
-import database.MyDate;
 import exceptions.GuestExistsException;
 import exceptions.NoSuchReservationException;
 import exceptions.PaymentErrorException;
@@ -122,14 +121,6 @@ public class Guest implements User, Subscriber {
     }
     public boolean hasReservation(int number){
         return reservations.containsKey(number);
-    }
-    public void remindReservations1Week(MyDate current){
-        for(Map.Entry<Integer, Reservation> r : this.reservations.entrySet()){
-            
-        }
-    }
-    public void addReminder(String message){
-        this.reminders.add(message);
     }
     public ArrayList<String> getReminders(){
         return this.reminders;

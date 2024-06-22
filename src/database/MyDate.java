@@ -44,8 +44,11 @@ public class MyDate {
     public static MyDate current(){
         return date(t.getYear(), t.getMonthValue(), t.getDayOfMonth());
     }
-    /*
-    returns the number of days from the start date to the end.
+
+    /**
+     * @param start start date
+     * @param end end date
+     * @return the number of days from the start date to the end.
      */
     public static int days(MyDate start, MyDate end){
         int count = 0;

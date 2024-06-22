@@ -1,7 +1,6 @@
 package users;
 
 import database.Accommodation;
-import database.Hotel;
 
 import java.util.ArrayList;
 

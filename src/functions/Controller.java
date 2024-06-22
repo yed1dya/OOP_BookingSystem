@@ -345,7 +345,7 @@ public abstract class Controller {
         search.sort(sorts.get(Integer.parseInt(input)-1));
         input = "Z";
         System.out.println("choose a hotel:");
-        ArrayList<Hotel> hotels = search.getHotels();
+        ArrayList<Accommodation> hotels = search.getHotels();
         for(int i=0; i<hotels.size(); i++){
             System.out.println((i+1)+") "+hotels.get(i));
         }
@@ -360,7 +360,7 @@ public abstract class Controller {
                 return;
             }
         }
-        Hotel hotel = hotels.get(Integer.parseInt(input)-1);
+        Hotel hotel = (Hotel) hotels.get(Integer.parseInt(input)-1);
         search.setHotel(hotel);
         try {
             search.filter();

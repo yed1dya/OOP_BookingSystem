@@ -52,9 +52,6 @@ public class Hotel implements Accommodation {
         }
         count();
     }
-    public static int count(){
-        return count++;
-    }
     public RoomInterface suggestRoomBundle(Search search)
             throws NullParamException, NoRoomsFoundException {
         RoomBundle bundle = new RoomBundle();
@@ -77,17 +74,6 @@ public class Hotel implements Accommodation {
         }
         return bundle;
     }
-
-    /**
-     *
-     * @param search the current search parameters.
-     * @param limit how many rooms to suggest.
-     * @return a list of rooms that match the search.
-     * Instead of "pulling" the relevant rooms from each hotel,
-     * the hotel is responsible for suggesting rooms.
-     * This allows a hotel to expand this method and suggest
-     * rooms that are more convenient for itself.
-     */
     public ArrayList<RoomInterface> suggestRooms(Search search, int limit){
         ArrayList<RoomInterface> relevantRooms = new ArrayList<>();
         int count = 0;
@@ -123,14 +109,17 @@ public class Hotel implements Accommodation {
         }
         return relevantRooms;
     }
-
-    public Reservation makeReservation(Guest guest, Search search, ArrayList<Integer> roomNumbers, RoomInterface room, String[] payInfo)
+    public Reservation makeReservation(Guest guest,
+                                       Search search, ArrayList<Integer> roomNumbers,
+                                       RoomInterface bundle, String[] payInfo)
             throws PaymentErrorException, RoomTakenException {
         return makeReservation(guest, search.getCheckIn(), search.getCheckOut(),
-                search.getLateCheckOut(),roomNumbers,room,payInfo);
+                search.getLateCheckOut(),roomNumbers,bundle,payInfo);
     }
-    public Reservation makeReservation(Guest guest, MyDate checkIn, MyDate checkOut,
-                                       boolean late, ArrayList<Integer> roomNumbers, RoomInterface room, String[] payInfo)
+    public Reservation makeReservation(Guest guest, MyDate checkIn,
+                                       MyDate checkOut, boolean late,
+                                       ArrayList<Integer> roomNumbers,
+                                       RoomInterface room, String[] payInfo)
             throws PaymentErrorException, RoomTakenException {
         int days = MyDate.days(checkIn,checkOut);
         double price = 0;
@@ -146,10 +135,13 @@ public class Hotel implements Accommodation {
         return reservation;
     }
     public Receipt deleteReservation(Reservation r, String[] payInfo)
-            throws NoSuchReservationException, PaymentErrorException {
+            throws PaymentErrorException {
+        if(r==null){
+            throw new PaymentErrorException("null reservation");
+        }
         Receipt receipt = refund(payInfo, r);
         MyDate date = r.getCheckIn(), checkOut = r.getCheckOut();
-        Room room = (Room) r.getRooms();
+        RoomBundle room = (RoomBundle) r.getRooms();
         while (date!=checkOut){
             room.removeDate(date);
             date = date.next();
@@ -157,8 +149,12 @@ public class Hotel implements Accommodation {
         return receipt;
     }
 
-    /*
-    'info[]' contains the payment method info - credit card, bank transfer, etc.
+    /**
+     * refunds payment to requested method
+     * @param info contains the payment method info - credit card, bank transfer, etc.
+     * @param r reservation
+     * @return receipt
+     * @throws PaymentErrorException if refund failed
      */
     private Receipt refund(String[] info, Reservation r)
             throws PaymentErrorException{
@@ -167,6 +163,14 @@ public class Hotel implements Accommodation {
         }
         return new Receipt(this, (-1*r.getReceipt().getPrice()));
     }
+
+    /**
+     * gets payment by requested method
+     * @param info contains the payment method info - credit card, bank transfer, etc.
+     * @param price reservation price
+     * @return receipt
+     * @throws PaymentErrorException if payment failed
+     */
     private Receipt pay(String[] info, double price)
             throws PaymentErrorException{
         if(info==null){
@@ -297,16 +301,15 @@ public class Hotel implements Accommodation {
     }
     public void changePrice(int roomNumber, double newPrice){
         Room room = this.rooms.get(roomNumber);
+        if(room==null) return;
         room.setPrice(newPrice);
         for(Map.Entry<MyDate, Reservation> r : room.getReservations().entrySet()){
             Reservation res = r.getValue();
             res.getGuest().notify("room price has changed. new price is "+newPrice);
         }
     }
-    public void notify(String message){
-        for(Subscriber s : subscribers){
-            s.notify(message);
-        }
+    public static int count(){
+        return count++;
     }
     public String hotelData(){
         StringBuilder str = new StringBuilder(name + ", " + stars + " stars" +

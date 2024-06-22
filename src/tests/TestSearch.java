@@ -1,7 +1,5 @@
 package tests;
 
-import database.Breakfast;
-import database.HotelAmenity;
 import org.junit.Test;
 import users.Search;
 

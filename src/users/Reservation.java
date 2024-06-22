@@ -1,7 +1,6 @@
 package users;
 
 import database.MyDate;
-import database.Room;
 import database.RoomInterface;
 
 public class Reservation {

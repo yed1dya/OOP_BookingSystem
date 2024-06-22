@@ -3,7 +3,6 @@ package database;
 import exceptions.GuestExistsException;
 import exceptions.NullParamException;
 import users.Guest;
-import users.Sort;
 import users.SortByPrice;
 import users.SortByStars;
 

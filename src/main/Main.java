@@ -107,6 +107,11 @@ public class Main {
             Guest demoGuest = new Guest
                     ("Yedidya", "Evenchen", "207404997", "0585902496", "yevenchen@gmail.com");
             Database.data().addGuest(demoGuest);
+            System.out.println(dan.getReservations());
+            dan.changePrice(1,225);
+            dan.notifySubscribers("notification");
+            RoomBundle bundle = new RoomBundle();
+            System.out.println(bundle.getRooms());
         }catch (NullParamException | GuestExistsException | RoomExistsException | NoSuchRoomException e){
             System.out.println("one of a number of things has gone wrong! again!");
             System.out.println("https://youtu.be/V3amj814LfY?t=184");
