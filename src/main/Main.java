@@ -15,7 +15,13 @@ public class Main {
     private static Random rand = new Random();
 
     public static void main(String[] args) {
-        demo();
+        try {
+            demo();
+        }catch (Exception e){
+            System.out.println("one of a number of things has gone wrong! again!");
+            System.out.println("https://youtu.be/V3amj814LfY?t=184");
+            demo();
+        }
     }
     public static void demo() {
         Scanner in = new Scanner(System.in);
@@ -46,7 +52,12 @@ public class Main {
             System.out.println("print full database? [Y]es\nelse - only hotels");
             printData(Database.data(),in.next().equalsIgnoreCase("Y"));
         }
-        Controller.menu(null);
+        try {
+            Controller.menu(null);
+        }catch (Exception e){
+            System.out.println("one of a number of things has gone wrong! again!");
+            System.out.println("https://youtu.be/V3amj814LfY?t=184");
+        }
     }
     public static void initDebugDatabase(){
         try {
