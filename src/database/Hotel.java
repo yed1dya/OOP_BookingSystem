@@ -7,7 +7,7 @@ import java.util.*;
 
 import static functions.Functions.*;
 
-public class Hotel {
+public class Hotel implements Accommodation {
     private static boolean created = false;
     private static int count = 0;
     private static HashMap<Integer,String> allPaymentOptions = new HashMap<>();

@@ -1,5 +1,6 @@
 package users;
 
+import database.Accommodation;
 import database.Hotel;
 
 import java.util.ArrayList;
@@ -14,8 +15,8 @@ public class SortByStars extends Sort implements SortInterface {
         }
     }
     @Override
-    public void sort(ArrayList<Hotel> hotels){
-        if (hotels==null) return;
-        hotels.sort(Comparator.comparingInt(Hotel::getStars).reversed());
+    public void sort(ArrayList<Accommodation> hotels){
+        if(hotels==null || hotels.isEmpty()) return;
+        hotels.sort(Comparator.comparingInt(Accommodation::getStars).reversed());
     }
 }

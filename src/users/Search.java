@@ -8,12 +8,12 @@ import java.util.ArrayList;
 
 public class Search {
     private City city;
-    private Hotel hotel;
+    private Accommodation hotel;
     private int lowStars, people, rooms;
     private double lowPrice, highPrice;
     private ArrayList<String> roomAmenities;
     private ArrayList<String> hotelAmenities;
-    private ArrayList<Hotel> hotels;
+    private ArrayList<Accommodation> hotels;
     private ArrayList<RoomInterface> roomsList;
     private MyDate checkIn, checkOut;
     private boolean lateCheckOut;
@@ -48,7 +48,7 @@ public class Search {
     }
 
     public void getRoomsFromHotels() throws NullParamException, NoRoomsFoundException {
-        for (Hotel hotel : hotels){
+        for (Accommodation hotel : hotels){
             this.roomsList.add(hotel.suggestRoomBundle(this));
         }
     }
@@ -71,7 +71,7 @@ public class Search {
             hotels.add(hotel);
         }
         else {
-            for (Hotel h : city.getHotels()) {
+            for (Accommodation h : city.getHotels()) {
                 if (isRelevantHotel(h)) {
                     hotels.add(h);
                 }
@@ -109,7 +109,7 @@ public class Search {
     public ArrayList<RoomInterface> getRoomsList() {
         return roomsList;
     }
-    public ArrayList<Hotel> getHotels() {
+    public ArrayList<Accommodation> getHotels() {
         return hotels;
     }
     public void clearHotels(){
@@ -175,13 +175,13 @@ public class Search {
     public ArrayList<String> getHotelAmenities() {
         return hotelAmenities;
     }
-    public Hotel getHotel(){
+    public Accommodation getHotel(){
         return this.hotel;
     }
-    public void setHotel(Hotel hotel){
+    public void setHotel(Accommodation hotel){
         this.hotel = hotel;
     }
-    private boolean hasAmenity(String a, Hotel h){
+    private boolean hasAmenity(String a, Accommodation h){
         ArrayList<HotelAmenity> options = h.getHotelAmenities();
         for(HotelAmenity hotelAmenity : options){
             if(a.equals(hotelAmenity.getName())){
@@ -190,7 +190,7 @@ public class Search {
         }
         return false;
     }
-    private boolean isRelevantHotel(Hotel h){
+    private boolean isRelevantHotel(Accommodation h){
         if(lowPrice>h.getHighPrice()){
             System.out.println("low price > high");
         }
