@@ -191,21 +191,11 @@ public class Search {
         return false;
     }
     private boolean isRelevantHotel(Accommodation h){
-        if(lowPrice>h.getHighPrice()){
-            System.out.println("low price > high");
-        }
-        if(highPrice<h.getLowPrice()){
-            System.out.println("high price < low");
-        }
-        if(lowStars>h.getStars()){
-            System.out.println("low stars > stars");
-        }
         if(lowPrice<=h.getHighPrice() &&
                 highPrice>=h.getLowPrice() &&
                 lowStars<=h.getStars()){
             for(String a : this.hotelAmenities) {
                 if (!hasAmenity(a, h)) {
-                    System.out.println("doesn't have "+a);
                     return false;
                 }
             }

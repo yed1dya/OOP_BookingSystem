@@ -51,6 +51,9 @@ public class Room implements RoomInterface {
         ans.add(this.roomNumber);
         return ans;
     }
+    public int getRoomNumber(){
+        return this.roomNumber;
+    }
     public void setRoomNumber(int roomNumber) {
         this.roomNumber = roomNumber;
     }

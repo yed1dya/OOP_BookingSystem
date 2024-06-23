@@ -99,6 +99,7 @@ public abstract class Controller {
             case "email" -> System.out.println(client.setEmail(getEmail()));
         }
     }
+    // methods to get client info from user:
     private static String getName(){
         String input = "1";
         System.out.println("enter '_Q' to quit");
@@ -156,7 +157,6 @@ public abstract class Controller {
         }
     }
     private static Guest chooseGuest(){
-
         ArrayList<String> options = new ArrayList<>();
         options.add("A");
         options.add("B");
@@ -284,6 +284,12 @@ public abstract class Controller {
         int day = Integer.parseInt(input);
         return MyDate.date(year, month, day);
     }
+
+    /**
+     * the "workhorse" of the program. gets search parameters,
+     * searches and reserves the rooms.
+     * @param guest the current guest that is logged in.
+     */
     private static void searchAndReserve(Guest guest) {
         Search search = guest.getSearch();
         if(search==null) return;
@@ -484,6 +490,7 @@ public abstract class Controller {
             System.out.println("transaction error");
         }
     }
+    // methods to get payment info from client, for the pay/refund
     private static String[] getRefundInfo(int refundOption, Guest guest, Hotel hotel)
             throws PaymentErrorException {
         String[] s;
@@ -552,6 +559,7 @@ public abstract class Controller {
         String num = in.next().toUpperCase();
         return new String[]{"<transfer confirmation>","bit: "+num,"guest: "+guest,"hotel: "+hotel};
     }
+    // demo search:
     private static void updateSearchFromDemo(Search search){
         search.setCity(data.getCities().get("TEL AVIV"));
         search.clearHotels();
