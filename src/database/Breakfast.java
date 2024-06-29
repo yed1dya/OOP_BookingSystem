@@ -1,6 +1,6 @@
 package database;
 
-public class Breakfast extends HotelAmenity{
+public class Breakfast extends HotelAmenity implements Meal{
     public Breakfast(String name) {
         super(name);
     }

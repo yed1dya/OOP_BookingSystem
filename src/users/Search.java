@@ -6,6 +6,8 @@ import exceptions.NullParamException;
 
 import java.util.ArrayList;
 
+import static main.Main.*;
+
 public class Search {
     private City city;
     private Accommodation hotel;
@@ -17,6 +19,7 @@ public class Search {
     private ArrayList<RoomInterface> roomsList;
     private MyDate checkIn, checkOut;
     private boolean lateCheckOut;
+    private String description;
 
     public Search(){
         city = null;
@@ -45,12 +48,48 @@ public class Search {
         checkOut = o.getCheckOut();
         lateCheckOut = o.getLateCheckOut();
         hotel = o.getHotel();
+        description = o.description();
+    }
+    public Search(int stars, double low, double high, int p,
+                  int r, MyDate in, MyDate out, boolean late, String d){
+        city = null;
+        lowStars = stars;
+        lowPrice = low;
+        people = p;
+        rooms = r;
+        highPrice = high;
+        checkIn = in;
+        checkOut = out;
+        lateCheckOut = late;
+        description = d;
+        roomAmenities = new ArrayList<>();
+        hotelAmenities = new ArrayList<>();
+        hotels = new ArrayList<>();
+        roomsList = new ArrayList<>();
+    }
+    public void update(Search o){
+        city = o.getCity();
+        lowStars = o.getLowStars();
+        lowPrice = o.getLowPrice();
+        people = o.getPeople();
+        rooms = o.getRooms();
+        highPrice = o.getHighPrice();
+        roomAmenities = o.getRoomAmenities();
+        hotelAmenities = o.getHotelAmenities();
+        hotels = o.getHotels();
+        roomsList = o.getRoomsList();
+        checkIn = o.getCheckIn();
+        checkOut = o.getCheckOut();
+        lateCheckOut = o.getLateCheckOut();
+        hotel = o.getHotel();
+        description = o.description();
     }
 
     public void getRoomsFromHotels() throws NullParamException, NoRoomsFoundException {
         for (Accommodation hotel : hotels){
             this.roomsList.add(hotel.suggestRoomBundle(this));
         }
+        if(DEBUG && PRINTALL) System.out.println(roomsList);
     }
     public void releaseRooms(){
         ArrayList<RoomInterface> roomsOnHold = roomsList;
@@ -66,16 +105,20 @@ public class Search {
 
     public void filter() throws NullParamException, NoRoomsFoundException {
         roomsList.clear();
+        if(DEBUG) System.out.println("roomsList:\n"+roomsList);
         if(hotel!=null){
             hotels.clear();
             hotels.add(hotel);
         }
         else {
             for (Accommodation h : city.getHotels()) {
+                if(DEBUG) System.out.println("checking "+h);
                 if (isRelevantHotel(h)) {
+                    if(DEBUG) System.out.println(h+" is relevant");
                     hotels.add(h);
-                }
+                }else if(DEBUG) System.out.println(h+" is not relevant");
             }
+            if(DEBUG) System.out.println(hotels);
         }
         getRoomsFromHotels();
     }
@@ -196,19 +239,23 @@ public class Search {
                 lowStars<=h.getStars()){
             for(String a : this.hotelAmenities) {
                 if (!hasAmenity(a, h)) {
+                    if(DEBUG) System.out.println("missing "+a);
                     return false;
                 }
             }
             try{
+                if(DEBUG) System.out.println("getting room bundle");
                 RoomInterface r = h.suggestRoomBundle(this);
-                System.out.println(r);
                 return !r.getRoomNumbers().isEmpty();
-            }catch (NoRoomsFoundException | NullParamException e){
+            }catch (NoRoomsFoundException e){
+                if(DEBUG) System.out.println("no rooms found in "+h);
+                return false;
+            }catch (NullParamException e){
+                if(DEBUG) System.out.println("null param passed");
                 return false;
             }
-
-
         }
+        if(DEBUG) System.out.println("returning false");
         return false;
     }
     public String toString(){
@@ -227,5 +274,11 @@ public class Search {
             ans.append(s).append(", ");
         }
         return ans.toString();
+    }
+    public void setDescription(String s){
+        description = s;
+    }
+    public String description(){
+        return description;
     }
 }

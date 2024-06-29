@@ -7,7 +7,7 @@ import users.*;
 import java.util.*;
 
 import static functions.Functions.*;
-import static main.Main.printData;
+import static main.Main.*;
 
 /*
 The Controller acts as the UI.
@@ -16,9 +16,11 @@ All input and output goes through the Controller.
 public abstract class Controller {
     static Scanner in = new Scanner(System.in);
     private static Database data = Database.data();
+    private static ArrayList<Search> demoSearches = new ArrayList<>();
 
     // main menu
     public static void menu(Guest guest) {
+        createDemoSearches();
         boolean go = true;
         while (guest==null) {
             guest = chooseGuest();
@@ -42,6 +44,7 @@ public abstract class Controller {
             }
         }
     }
+
     private static String chooseAction(){
         ArrayList<String> options = new ArrayList<>();
         options.add("A");
@@ -143,6 +146,7 @@ public abstract class Controller {
         }
         return input;
     }
+
     private static void showReservations(Guest guest) {
         if(guest==null){
             System.out.println("guest is null");
@@ -317,9 +321,11 @@ public abstract class Controller {
                 }
             }
         }
-        System.out.println("\n"+search+"\n");
+        System.out.println("search:\n"+search+"\n");
         try {
+            if(DEBUG) System.out.println("filtering...");
             search.filter();
+            if(DEBUG) System.out.println("done");
         }catch (NullParamException e){
             System.out.println("reservation could not be completed.");
             search.releaseRooms();
@@ -369,6 +375,7 @@ public abstract class Controller {
         Hotel hotel = (Hotel) hotels.get(Integer.parseInt(input)-1);
         search.setHotel(hotel);
         try {
+            search.releaseRooms();
             search.filter();
         }catch (NullParamException e){
             System.out.println("reservation could not be completed.");
@@ -380,7 +387,7 @@ public abstract class Controller {
             return;
         }
         input = "Z";
-        System.out.println("choose a room bundle:");
+        System.out.println("\nchoose a room bundle:");
         ArrayList<RoomInterface> rooms = search.getRoomsList();
         for(int i=0; i<rooms.size(); i++){
             System.out.println((i+1)+") "+rooms.get(i));
@@ -389,7 +396,7 @@ public abstract class Controller {
                 (isAllInts(input) &&
                         (Integer.parseInt(input)<1 ||
                                 Integer.parseInt(input)-1>=search.getRoomsList().size()))){
-            System.out.print("enter number: ");
+            System.out.print("\nenter number: ");
             input = in.next().toUpperCase();
             if(input.equalsIgnoreCase("Q")){
                 search.clearHotels();
@@ -419,7 +426,7 @@ public abstract class Controller {
             Reservation r = hotel.makeReservation(guest,search,room.getRoomNumbers(),room,payInfo);
             guest.addReservation(r);
             search.releaseRooms();
-            System.out.println("\n"+r);
+            System.out.println("\nreservation made successfully!\n"+r);
         }catch (RoomTakenException e){
             System.out.println("this room is already taken.\ntry a different room");
             search.releaseRooms();
@@ -471,6 +478,7 @@ public abstract class Controller {
                     return;
                 }
             }
+            System.out.println("reservation cancelled successfully");
         }
         input = "Z";
         System.out.println("choose refund option:");
@@ -561,18 +569,19 @@ public abstract class Controller {
     }
     // demo search:
     private static void updateSearchFromDemo(Search search){
-        search.setCity(data.getCities().get("TEL AVIV"));
-        search.clearHotels();
-        search.setPeople(4);
-        search.setRooms(2);
-        search.setCheckIn(MyDate.current());
-        search.setCheckOut(MyDate.current().next().next());
-        search.setLowPrice(100);
-        search.setHighPrice(1500);
-        search.setLateCheckOut(true);
-        search.setLowStars(3);
-        search.addRoomAmenity("Room Balcony");
-        search.addHotelAmenity("Swimming Pool");
+        System.out.println("demo searches:");
+        int i=1;
+        ArrayList<String> options = new ArrayList<>();
+        for(Search s : demoSearches){
+            options.add(String.valueOf(i));
+            System.out.println((i++)+") "+s.description());
+        }
+        String input = "Z";
+        while(!options.contains(input)) {
+            System.out.println("\nchoose a search:");
+            input = in.next();
+        }
+        search.update(demoSearches.get(Integer.parseInt(input)-1));
     }
     private static void updateRoomsAndPeople(Search search){
         String input = "Z";
@@ -697,5 +706,83 @@ public abstract class Controller {
                 if(input.equalsIgnoreCase("N")) search.addHotelAmenity(a.getName());
             }
         }
+    }
+
+    private static void createDemoSearches() {
+        String s = "Tel aviv, 4 people 2 rooms, 3 stars, "+
+                MyDate.current()+" -> "+MyDate.current().next().next()+", "+
+                "100 -> 1500"+
+                "late checkOut, balcony, dinner";
+        Search search = new Search(3,100,1500,4,2,
+                MyDate.current(),MyDate.current().next().next(),true,s);
+        search.setCity(data.getCities().get("TEL AVIV"));
+        search.clearHotels();
+        search.addRoomAmenity("Room Balcony");
+        search.addHotelAmenity("Dinner");
+        demoSearches.add(search);
+
+        s = "Jerusalem, 3 people 2 rooms, 5 stars, "+
+                MyDate.current()+" -> "+MyDate.current().next().next()+", "+
+                "1000 -> 4500"+
+                "late checkOut, balcony, pool, breakfast, lunch, dinner";
+        search = new Search(5,1000,4500,3,2,
+                MyDate.current(),MyDate.current().next().next(),true,s);
+        search.setCity(data.getCities().get("JERUSALEM"));
+        search.clearHotels();
+        search.addRoomAmenity("Room Balcony");
+        search.addHotelAmenity("Swimming Pool");
+        search.addHotelAmenity("Breakfast");
+        search.addHotelAmenity("Lunch");
+        search.addHotelAmenity("Dinner");
+        demoSearches.add(search);
+
+        s = "Eilat, 15 people 6 rooms, 2 stars, "+
+                MyDate.current()+" -> "+MyDate.current().next().next()+", "+
+                "100 -> 15000"+
+                "late checkOut, balcony, pool";
+        search = new Search(2,100,15000,15,6,
+                MyDate.current(),MyDate.current().next().next(),true,s);
+        search.setCity(data.getCities().get("EILAT"));
+        search.clearHotels();
+        search.addRoomAmenity("Room Balcony");
+        search.addHotelAmenity("Swimming Pool");
+        demoSearches.add(search);
+
+        s = "Tverya, 8 people 2 rooms, 4 stars, "+
+                MyDate.current()+" -> "+MyDate.current().next().next()+", "+
+                "100 -> 20000"+
+                "late checkOut, pool, breakfast";
+        search = new Search(4,100,20000,8,2,
+                MyDate.current(),MyDate.current().next().next(),true,s);
+        search.setCity(data.getCities().get("TVERYA"));
+        search.clearHotels();
+        search.addHotelAmenity("Swimming Pool");
+        search.addHotelAmenity("Breakfast");
+        demoSearches.add(search);
+
+        s = "Eilat, 15 people 12 rooms, 2 stars, "+
+                MyDate.current()+" -> "+MyDate.current().next().next()+", "+
+                "100 -> 15000"+
+                "late checkOut, balcony, pool";
+        search = new Search(2,100,25000,15,12,
+                MyDate.current(),MyDate.current().next().next(),true,s);
+        search.setCity(data.getCities().get("EILAT"));
+        search.clearHotels();
+        search.addRoomAmenity("Room Balcony");
+        search.addHotelAmenity("Swimming Pool");
+        demoSearches.add(search);
+
+        s = "Tel Aviv, 15 people 3 rooms, 3 stars, "+
+                MyDate.current()+" -> "+MyDate.current().next().next()+", "+
+                "100 -> 15000"+
+                "balcony, pool, lunch";
+        search = new Search(3,100,15000,15,3,
+                MyDate.current(),MyDate.current().next().next(),false,s);
+        search.setCity(data.getCities().get("TEL AVIV"));
+        search.clearHotels();
+        search.addRoomAmenity("Room Balcony");
+        search.addHotelAmenity("Swimming Pool");
+        search.addHotelAmenity("Lunch");
+        demoSearches.add(search);
     }
 }

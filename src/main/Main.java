@@ -13,25 +13,33 @@ import static database.MyDate.*;
 
 public class Main {
     private static Random rand = new Random();
+    public static final boolean DEBUG = true, PRINTALL = false;
+    private static boolean A = true, B = true, C = true;
 
     public static void main(String[] args) {
         try {
             demo();
         }catch (Exception e){
-            System.out.println("one of a number of things has gone wrong! again!");
+            System.out.println("one of a number of things has gone wrong!");
             System.out.println("https://youtu.be/V3amj814LfY?t=184");
+            e.printStackTrace();
             demo();
         }
     }
     public static void demo() {
         Scanner in = new Scanner(System.in);
-        String s;
+        System.out.println("""
+                To choose an action,
+                enter the letter or number in the list.
+                Input is not case sensitive,
+                unless otherwise specified.
+                Enjoy!""");
+        String s, message = "\nA) use demo database";
+        if(DEBUG) message += "\nB) use debug database";
+        message += "\nQ) quit";
         boolean go = true;
         while (go){
-            System.out.println("""
-                    A) use demo database
-                    B) use debug database
-                    Q) quit""");
+            System.out.println(message);
             s = in.next().toUpperCase();
             switch (s) {
                 case "A" -> {
@@ -47,17 +55,14 @@ public class Main {
                 }
             }
         }
-        System.out.println("print database? [Y]es [N]o");
-        if(in.next().equalsIgnoreCase("Y")){
-            System.out.println("print full database? [Y]es\nelse - only hotels");
-            printData(Database.data(),in.next().equalsIgnoreCase("Y"));
+        if(DEBUG) {
+            System.out.println("print database? [Y]es [N]o");
+            if (in.next().equalsIgnoreCase("Y")) {
+                System.out.println("print full database? [Y]es\nelse - only hotels");
+                printData(Database.data(), in.next().equalsIgnoreCase("Y"));
+            }
         }
-        try {
-            Controller.menu(null);
-        }catch (Exception e){
-            System.out.println("one of a number of things has gone wrong! again!");
-            System.out.println("https://youtu.be/V3amj814LfY?t=184");
-        }
+        Controller.menu(null);
     }
     public static void initDebugDatabase(){
         try {
@@ -147,9 +152,10 @@ public class Main {
         for(Map.Entry<String, City> c : database.getCities().entrySet()){
             for(Hotel h : c.getValue().getHotels()){
                 int stars = h.getStars();
-                if(rand.nextBoolean() || stars>=3) h.addHotelAmenity(new Breakfast());
-                if(rand.nextBoolean() || stars>=4) h.addHotelAmenity(new Lunch());
-                if(rand.nextBoolean() || stars>=2) h.addHotelAmenity(new Dinner());
+                if(rand.nextBoolean() || stars>=3 || A) h.addHotelAmenity(new Breakfast());
+                if(rand.nextBoolean() || stars>=4 || B) h.addHotelAmenity(new Lunch());
+                if(rand.nextBoolean() || stars>=2 || C) h.addHotelAmenity(new Dinner());
+                A = false; B = false; C = false;
                 if(rand.nextBoolean() || stars >= 3){
                     h.addHotelAmenity(new SwimmingPool());
                 }
@@ -166,7 +172,7 @@ public class Main {
                             System.out.println("null room cannot be added");
                         }
                         for(int k=0; k<10; k++){
-                            int year = rand.nextInt(2024,2026);
+                            int year = rand.nextInt(2024,2027);
                             int month = rand.nextInt(1,13);
                             int day = rand.nextInt(1,32);
                             MyDate date = date(year,month,day);
@@ -212,7 +218,7 @@ public class Main {
         ArrayList<RoomAmenity> a = new ArrayList<>();
         if(rand.nextBoolean()) a.add(new HotTub());
         if(rand.nextBoolean()) a.add(new RoomBalcony());
-        int beds = rand.nextInt(1,4);
+        int beds = rand.nextInt(1,5);
         double price = rand.nextInt((int) low,(int) high);
         price += getRandomFraction();
         return new Room(number,beds,price,a,hotel);
