@@ -13,7 +13,7 @@ import static database.MyDate.*;
 
 public class Main {
     private static Random rand = new Random();
-    public static final boolean DEBUG = true, PRINTALL = false;
+    public static final boolean DEBUG = true, PRINT_ALL = false;
     private static boolean A = true, B = true, C = true;
 
     public static void main(String[] args) {
@@ -22,8 +22,10 @@ public class Main {
         }catch (Exception e){
             System.out.println("one of a number of things has gone wrong!");
             System.out.println("https://youtu.be/V3amj814LfY?t=184");
-            e.printStackTrace();
-            demo();
+            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
+            System.out.println(e.getLocalizedMessage());
+            main(new String[]{});
         }
     }
     public static void demo() {

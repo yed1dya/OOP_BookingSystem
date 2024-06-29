@@ -89,7 +89,7 @@ public class Search {
         for (Accommodation hotel : hotels){
             this.roomsList.add(hotel.suggestRoomBundle(this));
         }
-        if(DEBUG && PRINTALL) System.out.println(roomsList);
+        if(DEBUG && PRINT_ALL) System.out.println(roomsList);
     }
     public void releaseRooms(){
         ArrayList<RoomInterface> roomsOnHold = roomsList;
@@ -274,9 +274,6 @@ public class Search {
             ans.append(s).append(", ");
         }
         return ans.toString();
-    }
-    public void setDescription(String s){
-        description = s;
     }
     public String description(){
         return description;
