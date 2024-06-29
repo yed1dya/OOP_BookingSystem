@@ -34,6 +34,7 @@ public class Search {
         roomsList = new ArrayList<>();
     }
     public Search(Search o){
+        if(o==null) return;
         city = o.getCity();
         lowStars = o.getLowStars();
         lowPrice = o.getLowPrice();
@@ -68,6 +69,7 @@ public class Search {
         roomsList = new ArrayList<>();
     }
     public void update(Search o){
+        if(o==null) return;
         city = o.getCity();
         lowStars = o.getLowStars();
         lowPrice = o.getLowPrice();
@@ -123,6 +125,7 @@ public class Search {
         getRoomsFromHotels();
     }
     public void sort(String parameter){
+        if(parameter==null) return;
         SortInterface sort = new Sort();
         switch (parameter.toLowerCase()){
             case "stars" -> sort = new SortByStars();
@@ -225,6 +228,7 @@ public class Search {
         this.hotel = hotel;
     }
     private boolean hasAmenity(String a, Accommodation h){
+        if(h==null || a==null) return false;
         ArrayList<HotelAmenity> options = h.getHotelAmenities();
         for(HotelAmenity hotelAmenity : options){
             if(a.equals(hotelAmenity.getName())){
@@ -234,6 +238,7 @@ public class Search {
         return false;
     }
     private boolean isRelevantHotel(Accommodation h){
+        if(h==null) return false;
         if(lowPrice<=h.getHighPrice() &&
                 highPrice>=h.getLowPrice() &&
                 lowStars<=h.getStars()){

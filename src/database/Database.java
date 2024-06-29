@@ -56,10 +56,12 @@ public class Database {
     public void addGuest(Guest guest)
             throws GuestExistsException, NullParamException {
         if(guest==null){
-            throw new NullParamException("null guest passed as parameter");
+            throw new NullParamException("null guest passed as parameter" +
+                    "in Database.addGuest(Guest guest)");
         }
         if(guestExists(guest.getID())){
-            throw new GuestExistsException("this ID already exists");
+            throw new GuestExistsException("this ID already exists" +
+                    "in Database.addGuest(Guest guest)");
         }
         this.guests.put(guest.getID(), guest);
     }

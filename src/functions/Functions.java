@@ -115,6 +115,7 @@ public abstract class Functions {
         return Database.data().getToday().compare(checkIn) >= 0;
     }
     public static boolean isValidCheckOutDate(MyDate checkOut, MyDate checkIn){
+        if(checkIn==null || checkOut==null) return false;
         return checkIn.compare(checkOut) > 0;
     }
     public static boolean isValidBoolean(String input){

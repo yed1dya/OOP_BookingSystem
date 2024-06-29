@@ -2,6 +2,7 @@ package functions;
 
 import database.*;
 import exceptions.*;
+import org.jetbrains.annotations.Nullable;
 import users.*;
 
 import java.util.*;
@@ -18,7 +19,7 @@ public abstract class Controller {
     private static Database data = Database.data();
     private static ArrayList<Search> demoSearches = new ArrayList<>();
 
-    // main menu
+    // Main menu:
     public static void menu(Guest guest) {
         createDemoSearches();
         boolean go = true;
@@ -44,7 +45,6 @@ public abstract class Controller {
             }
         }
     }
-
     private static String chooseAction(){
         ArrayList<String> options = new ArrayList<>();
         options.add("A");
@@ -102,8 +102,8 @@ public abstract class Controller {
             case "email" -> System.out.println(client.setEmail(getEmail()));
         }
     }
-    // methods to get client info from user:
-    private static String getName(){
+    // Methods to get client info from user:
+    private static @Nullable String getName(){
         String input = "1";
         System.out.println("enter '_Q' to quit");
         while (!isValidName(input)){
@@ -113,7 +113,7 @@ public abstract class Controller {
         }
         return input;
     }
-    private static String getPhoneNumber(){
+    private static @Nullable String getPhoneNumber(){
         String input = "Z";
         System.out.println("enter 'Q' to quit");
         while(!isValidPhone(input)){
@@ -123,7 +123,7 @@ public abstract class Controller {
         }
         return input;
     }
-    private static String getEmail(){
+    private static @Nullable String getEmail(){
         String input = "";
         System.out.println("enter '_Q' to quit");
         while(!isValidEmail(input)){
@@ -133,7 +133,7 @@ public abstract class Controller {
         }
         return input;
     }
-    private static String getID(){
+    private static @Nullable String getID(){
         String input = "Z";
         System.out.println("enter 'Q' to quit");
         while(!isValidID(input) || data.guestExists(input)){
@@ -226,7 +226,7 @@ public abstract class Controller {
         }
         return guest;
     }
-    private static Guest createGuestFromUserInput(){
+    private static @Nullable Guest createGuestFromUserInput(){
         String ID = getID();
         String firstName = getName();
         String lastName = getName();
@@ -239,7 +239,7 @@ public abstract class Controller {
             return null;
         }
     }
-    private static Guest chooseGuestFromList(){
+    private static @Nullable Guest chooseGuestFromList(){
         String input = "Z";
         ArrayList<String> options = new ArrayList<>();
         options.add("A");
@@ -290,11 +290,12 @@ public abstract class Controller {
     }
 
     /**
-     * the "workhorse" of the program. gets search parameters,
-     * searches and reserves the rooms.
+     * The "workhorse" of the program.
+     * Gets search parameters, searches and reserves the rooms.
      * @param guest the current guest that is logged in.
      */
     private static void searchAndReserve(Guest guest) {
+        if(guest==null) return;
         Search search = guest.getSearch();
         if(search==null) return;
         ArrayList<String> options = new ArrayList<>();
@@ -303,6 +304,7 @@ public abstract class Controller {
         options.add("C");
         options.add("Q");
         String input = "Z";
+        // Choose how to search:
         while (!options.contains(input)){
             System.out.println("\nA) input new search");
             if(search.getCity()!=null){
@@ -322,6 +324,7 @@ public abstract class Controller {
             }
         }
         System.out.println("search:\n"+search+"\n");
+        // Filter by search params:
         try {
             if(DEBUG) System.out.println("filtering...");
             search.filter();
@@ -335,6 +338,7 @@ public abstract class Controller {
             search.releaseRooms();
             return;
         }
+        // Choose how to sort options:
         input = "Z";
         System.out.println("sort hotels by:");
         options.clear();
@@ -355,6 +359,7 @@ public abstract class Controller {
             }
         }
         search.sort(sorts.get(Integer.parseInt(input)-1));
+        // Choose hotel:
         input = "Z";
         System.out.println("choose a hotel:");
         ArrayList<Accommodation> hotels = search.getHotels();
@@ -374,6 +379,7 @@ public abstract class Controller {
         }
         Hotel hotel = (Hotel) hotels.get(Integer.parseInt(input)-1);
         search.setHotel(hotel);
+        // Search within hotel:
         try {
             search.releaseRooms();
             search.filter();
@@ -386,6 +392,7 @@ public abstract class Controller {
             search.releaseRooms();
             return;
         }
+        // Choose reservation option:
         input = "Z";
         System.out.println("\nchoose a room bundle:");
         ArrayList<RoomInterface> rooms = search.getRoomsList();
@@ -405,6 +412,7 @@ public abstract class Controller {
             }
         }
         RoomInterface room = rooms.get(Integer.parseInt(input)-1);
+        // Choose payment method:
         input = "Z";
         System.out.println("choose payment method:");
         ArrayList<Integer> paymentOptions = room.getHotel().getPaymentOptions();
@@ -421,6 +429,7 @@ public abstract class Controller {
                 return;
             }
         }
+        // Get payment with helper methods and return reservation:
         try {
             String[] payInfo = getPaymentInfo(Integer.parseInt(input), guest, hotel);
             Reservation r = hotel.makeReservation(guest,search,room.getRoomNumbers(),room,payInfo);
@@ -436,6 +445,7 @@ public abstract class Controller {
         }
     }
     private static void cancelReservation(Guest guest) {
+        if(guest==null) return;
         String input = "Z";
         HashMap<Integer,Reservation> reservations = guest.getReservations();
         for(Map.Entry<Integer, Reservation> res : reservations.entrySet()){
@@ -498,7 +508,7 @@ public abstract class Controller {
             System.out.println("transaction error");
         }
     }
-    // methods to get payment info from client, for the pay/refund
+    // Methods to get payment info from client, for the pay/refund:
     private static String[] getRefundInfo(int refundOption, Guest guest, Hotel hotel)
             throws PaymentErrorException {
         String[] s;
@@ -522,6 +532,7 @@ public abstract class Controller {
         return s;
     }
     private static String[] payBankTransfer(Guest guest, Hotel hotel){
+        if(guest==null) return null;
         System.out.println("enter your bank info:");
         System.out.print("bank name: ");
         String bank = in.next().toUpperCase();
@@ -530,6 +541,7 @@ public abstract class Controller {
         return new String[]{"<transaction confirmation>","bank: "+bank,"accNum: "+accNum,"guest: "+guest,"hotel: "+hotel};
     }
     private static String[] payCreditCard(Guest guest, Hotel hotel){
+        if(guest==null || hotel==null) return null;
         System.out.println("enter your credit card info:");
         System.out.print("card number: ");
         String num = in.next().toUpperCase();
@@ -540,11 +552,13 @@ public abstract class Controller {
         return new String[]{"<credit card info>","cardNum: "+num,"exp: "+date,"cvv: "+cvv,"guest: "+guest,"hotel: "+hotel};
     }
     private static String[] payBitPay(Guest guest, Hotel hotel){
+        if(guest==null || hotel==null) return null;
         System.out.print("enter transfer number: ");
         String num = in.next().toUpperCase();
         return new String[]{"<transfer confirmation>","bit: "+num,"guest: "+guest,"hotel: "+hotel};
     }
     private static String[] refundBankTransfer(Guest guest, Hotel hotel){
+        if(guest==null || hotel==null) return null;
         System.out.println("enter your bank info:");
         System.out.print("bank name: ");
         String bank = in.next().toUpperCase();
@@ -553,6 +567,7 @@ public abstract class Controller {
         return new String[]{"<transaction confirmation>","bank: "+bank,"accNum: "+accNum,"guest: "+guest,"hotel: "+hotel};
     }
     private static String[] refundCreditCard(Guest guest, Hotel hotel){
+        if(guest==null || hotel==null) return null;
         System.out.println("enter your credit card info:");
         System.out.print("card number: ");
         String num = in.next().toUpperCase();
@@ -563,11 +578,12 @@ public abstract class Controller {
         return new String[]{"<credit card info>","cardNum: "+num,"exp: "+date,"cvv: "+cvv,"guest: "+guest,"hotel: "+hotel};
     }
     private static String[] refundBitPay(Guest guest, Hotel hotel){
+        if(guest==null || hotel==null) return null;
         System.out.print("enter phone number: ");
         String num = in.next().toUpperCase();
         return new String[]{"<transfer confirmation>","bit: "+num,"guest: "+guest,"hotel: "+hotel};
     }
-    // demo search:
+
     private static void updateSearchFromDemo(Search search){
         System.out.println("demo searches:");
         int i=1;

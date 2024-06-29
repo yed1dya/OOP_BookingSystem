@@ -55,6 +55,7 @@ public class Hotel implements Accommodation {
         }
         count();
     }
+
     public RoomInterface suggestRoomBundle(Search search)
             throws NullParamException, NoRoomsFoundException {
         RoomBundle bundle = new RoomBundle();
@@ -96,25 +97,28 @@ public class Hotel implements Accommodation {
         }
         return bundle;
     }
+    // Helper method. Gives a list of relevant rooms for a single subgroup:
     public ArrayList<RoomInterface> suggestRooms(Search search, int limit){
         ArrayList<RoomInterface> relevantRooms = new ArrayList<>();
+        if(limit<=0) return relevantRooms;
         int count = 0;
+        // By default, roomsList is sorted (increasing) by the number of beds in each room.
         for(Room room : roomsList){
             boolean relevant = !room.isOnHold();
-            // Check that room matches search parameters:
+            // Check if the room matches the general search parameters:
             if(room.getBeds()<search.getPeople() ||
                     room.getPrice()>search.getHighPrice() ||
                     room.getPrice()<search.getLowPrice()){
                 relevant = false;
             }
-            // Check if room has all the required amenities:
+            // Check if the room has all the required amenities:
             for(String a : search.getRoomAmenities()){
                 if(!relevant) break;
                 if(!room.getRoomAmenitiesNames().contains(a)){
                     relevant = false;
                 }
             }
-            // Check that room is available on dates:
+            // Check if the room is available on dates:
             MyDate date = search.getCheckIn(), checkOut = search.getCheckOut();
             while (date!=checkOut && relevant){
                 if(room.getDates().contains(date)){
@@ -129,7 +133,7 @@ public class Hotel implements Accommodation {
                 room.setHold(true);
                 count++;
             }
-            if(limit>0 && count==limit){
+            if(count>=limit){
                 return relevantRooms;
             }
         }
