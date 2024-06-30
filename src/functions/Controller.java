@@ -14,7 +14,7 @@ import static main.Main.*;
 The Controller acts as the UI.
 All input and output goes through the Controller.
  */
-public abstract class Controller {
+public final class Controller {
     static Scanner in = new Scanner(System.in);
     private static Database data = Database.data();
     private static ArrayList<Search> demoSearches = new ArrayList<>();

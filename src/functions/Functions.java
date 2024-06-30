@@ -4,7 +4,7 @@ import database.Database;
 import database.MyDate;
 
 import java.util.Random;
-public abstract class Functions {
+public final class Functions {
     public static final int BANK_TRANSFER = 1,
             CREDIT_CARD = 2, BIT_PAY = 3, MAX_YEAR = 3000;
     private static Random random = new Random();
