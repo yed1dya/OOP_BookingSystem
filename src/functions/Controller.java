@@ -351,6 +351,7 @@ public abstract class Controller {
         ArrayList<Accommodation> hotels = search.getHotels();
         if(hotels.isEmpty()){
             System.out.println("no relevant hotel found.");
+            search.releaseRooms();
             return;
         }
         // Choose how to sort options:
@@ -409,9 +410,10 @@ public abstract class Controller {
         // Choose reservation option:
         input = "Z";
         System.out.println("\nchoose a room bundle:");
-        ArrayList<RoomInterface> rooms = search.getRoomsList();
+        ArrayList<RoomInterface> rooms = search.getSearchRoomList();
         if(rooms.isEmpty()){
             System.out.println("no available options.");
+            search.releaseRooms();
             return;
         }
         for(int i=0; i<rooms.size(); i++){
@@ -420,7 +422,7 @@ public abstract class Controller {
         while(!isAllInts(input) ||
                 (isAllInts(input) &&
                         (Integer.parseInt(input)<1 ||
-                                Integer.parseInt(input)-1>=search.getRoomsList().size()))){
+                                Integer.parseInt(input)-1>=search.getSearchRoomList().size()))){
             System.out.print("\nenter number: ");
             input = in.next().toUpperCase();
             if(input.equalsIgnoreCase("Q")){
@@ -700,7 +702,7 @@ public abstract class Controller {
         System.out.println("check out date:");
         while (!isValidCheckOutDate(checkOut,checkIn)){
             if(checkOut.compare(checkIn) < 0){
-                System.out.println("check out date can't be after check in");
+                System.out.println("check out date can't be before check in");
             }
             System.out.println("enter a valid date");
             checkOut = getDateFromUserInput();

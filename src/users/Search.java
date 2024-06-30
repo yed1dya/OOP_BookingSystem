@@ -16,7 +16,7 @@ public class Search {
     private ArrayList<String> roomAmenities;
     private ArrayList<String> hotelAmenities;
     private ArrayList<Accommodation> hotels;
-    private ArrayList<RoomInterface> roomsList;
+    private ArrayList<RoomInterface> searchRoomList;
     private MyDate checkIn, checkOut;
     private boolean lateCheckOut;
     private String description;
@@ -31,7 +31,7 @@ public class Search {
         roomAmenities = new ArrayList<>();
         hotelAmenities = new ArrayList<>();
         hotels = new ArrayList<>();
-        roomsList = new ArrayList<>();
+        searchRoomList = new ArrayList<>();
     }
     public Search(Search o){
         if(o==null) return;
@@ -44,7 +44,7 @@ public class Search {
         roomAmenities = o.getRoomAmenities();
         hotelAmenities = o.getHotelAmenities();
         hotels = o.getHotels();
-        roomsList = o.getRoomsList();
+        searchRoomList = o.getSearchRoomList();
         checkIn = o.getCheckIn();
         checkOut = o.getCheckOut();
         lateCheckOut = o.getLateCheckOut();
@@ -66,7 +66,7 @@ public class Search {
         roomAmenities = new ArrayList<>();
         hotelAmenities = new ArrayList<>();
         hotels = new ArrayList<>();
-        roomsList = new ArrayList<>();
+        searchRoomList = new ArrayList<>();
     }
     public void update(Search o){
         if(o==null) return;
@@ -79,7 +79,7 @@ public class Search {
         roomAmenities = o.getRoomAmenities();
         hotelAmenities = o.getHotelAmenities();
         hotels = o.getHotels();
-        roomsList = o.getRoomsList();
+        searchRoomList = o.getSearchRoomList();
         checkIn = o.getCheckIn();
         checkOut = o.getCheckOut();
         lateCheckOut = o.getLateCheckOut();
@@ -89,12 +89,15 @@ public class Search {
 
     public void getRoomsFromHotels() throws NullParamException, NoRoomsFoundException {
         for (Accommodation hotel : hotels){
-            this.roomsList.add(hotel.suggestRoomBundle(this));
+            this.searchRoomList.add(hotel.suggestRoomBundle(this));
         }
-        if(DEBUG && PRINT_ALL) System.out.println(roomsList);
+        if(DEBUG && PRINT_ALL) System.out.println(searchRoomList);
     }
+
+    // During the search process, rooms are set on hold.
+    // We need a way to "release" them if they weren't reserved:
     public void releaseRooms(){
-        ArrayList<RoomInterface> roomsOnHold = roomsList;
+        ArrayList<RoomInterface> roomsOnHold = searchRoomList;
         for(RoomInterface room : roomsOnHold){
             if(room.getClass().getSimpleName().equals(Room.class.getSimpleName())){
                 room.setHold(false);
@@ -105,14 +108,16 @@ public class Search {
         }
     }
 
+    // Filter hotels by the search parameters:
     public void filter() throws NullParamException, NoRoomsFoundException {
-        roomsList.clear();
-        if(DEBUG) System.out.println("roomsList:\n"+roomsList);
+        searchRoomList.clear();
+        // If a hotel is already selected:
         if(hotel!=null){
             hotels.clear();
             hotels.add(hotel);
         }
         else {
+            // Check which hotels are relevant:
             for (Accommodation h : city.getHotels()) {
                 if(DEBUG) System.out.println("checking "+h);
                 if (isRelevantHotel(h)) {
@@ -152,8 +157,8 @@ public class Search {
     public void setLateCheckOut(boolean lateCheckOut) {
         this.lateCheckOut = lateCheckOut;
     }
-    public ArrayList<RoomInterface> getRoomsList() {
-        return roomsList;
+    public ArrayList<RoomInterface> getSearchRoomList() {
+        return searchRoomList;
     }
     public ArrayList<Accommodation> getHotels() {
         return hotels;
@@ -239,9 +244,11 @@ public class Search {
     }
     private boolean isRelevantHotel(Accommodation h){
         if(h==null) return false;
+        // Check the basic things first:
         if(lowPrice<=h.getHighPrice() &&
                 highPrice>=h.getLowPrice() &&
                 lowStars<=h.getStars()){
+            // Check amenities:
             for(String a : this.hotelAmenities) {
                 if (!hasAmenity(a, h)) {
                     if(DEBUG) System.out.println("missing "+a);
@@ -249,6 +256,7 @@ public class Search {
                 }
             }
             try{
+                // Check if the hotel can offer a relevant room bundle:
                 if(DEBUG) System.out.println("getting room bundle");
                 RoomInterface r = h.suggestRoomBundle(this);
                 return !r.getRoomNumbers().isEmpty();

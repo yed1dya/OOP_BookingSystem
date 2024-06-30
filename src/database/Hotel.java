@@ -18,7 +18,7 @@ public class Hotel implements Accommodation {
     private int bottomFloor;
     private int topFloor;
     private HashMap<Integer, Room> rooms;
-    private ArrayList<Room> roomsList;
+    private ArrayList<Room> hotelRoomList;
     private double lowPrice, highPrice;
     private ArrayList<Integer> paymentOptions;
     private ArrayList<Integer> refundOptions;
@@ -38,7 +38,7 @@ public class Hotel implements Accommodation {
         this.lowPrice = lowPrice;
         this.highPrice = highPrice;
         this.rooms = new HashMap<>();
-        this.roomsList = new ArrayList<>();
+        this.hotelRoomList = new ArrayList<>();
         this.paymentOptions = new ArrayList<>(paymentOptions);
         this.refundOptions = new ArrayList<>(refundOptions);
         this.hotelAmenities = new ArrayList<>();
@@ -58,14 +58,19 @@ public class Hotel implements Accommodation {
 
     public RoomInterface suggestRoomBundle(Search search)
             throws NullParamException, NoRoomsFoundException {
-        roomsList.sort(Comparator.comparingDouble(Room::getPrice));
-        roomsList.sort(Comparator.comparingInt(Room::getBeds));
+        if(search==null) return null;
+        // Sort by price and beds:
+        // Java uses stable sort, so the order of the first search is relatively preserved.
+        // Even so, the number if beds is more important, so that is the second sort.
+        hotelRoomList.sort(Comparator.comparingDouble(Room::getPrice));
+        hotelRoomList.sort(Comparator.comparingInt(Room::getBeds));
         RoomBundle bundle = new RoomBundle();
         boolean couldNotFind = false;
         // Set how many people per room:
         int people = search.getPeople(), rooms = search.getRooms(),
                 perRoom = (int) Math.ceil((double)people/rooms);
-        // Create new search. This search will assign a room for each subgroup of people.
+        // Create new temporary Search.
+        // This Search will help assign a room for each subgroup of people:
         Search t = new Search(search);
         t.setRooms(1);
         while (people>0){
@@ -82,9 +87,10 @@ public class Hotel implements Accommodation {
             if(!roomSuggestions.isEmpty()){
                 // If an option was found, add it to the list,
                 // and decrease that number of people from the group.
-                Room room = (Room) roomSuggestions.get(0);
+                Room room = (Room)roomSuggestions.get(0);
+                // check that the price limit isn't exceeded:
                 if(room.getPrice()+bundle.getPrice()<=search.getHighPrice()) {
-                    bundle.addRoom((Room) roomSuggestions.get(0));
+                    bundle.addRoom((Room)roomSuggestions.get(0));
                     people -= perRoom;
                     rooms--;
                 }
@@ -97,18 +103,20 @@ public class Hotel implements Accommodation {
             if(perRoom<=0){
                 if(DEBUG) System.out.println("perRoom<=0");
                 // If we couldn't find a way to split the group into rooms:
+                search.releaseRooms();
                 throw new NoRoomsFoundException("could not find enough relevant rooms.");
             }
         }
         return bundle;
     }
-    // Helper method. Gives a list of relevant rooms for a single subgroup:
+    // Gives a list of up to <limit> relevant rooms.
+    // Helper method for suggestRoomBundle; returns one room for the search.
     public ArrayList<RoomInterface> suggestRooms(Search search, int limit){
         ArrayList<RoomInterface> relevantRooms = new ArrayList<>();
         if(limit<=0) return relevantRooms;
         int count = 0;
         // By default, roomsList is sorted (increasing) by the number of beds in each room.
-        for(Room room : roomsList){
+        for(Room room : hotelRoomList){
             boolean relevant = !room.isOnHold();
             // Check if the room matches the general search parameters:
             if(room.getBeds()<search.getPeople() ||
@@ -244,7 +252,7 @@ public class Hotel implements Accommodation {
             throw new RoomExistsException("this hotel already has a room with this number");
         }
         this.rooms.put(room.getRoomNumber(), room);
-        this.roomsList.add(room);
+        this.hotelRoomList.add(room);
         double price = room.getPrice();
         if(price<lowPrice){
             lowPrice = price;
