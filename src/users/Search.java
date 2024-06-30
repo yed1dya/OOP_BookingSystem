@@ -280,6 +280,9 @@ public class Search {
         }
         return ans.toString();
     }
+    public void describe(String s){
+        description = s;
+    }
     public String description(){
         return description;
     }

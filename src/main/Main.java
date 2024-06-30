@@ -13,7 +13,7 @@ import static database.MyDate.*;
 
 public class Main {
     private static Random rand = new Random();
-    public static final boolean DEBUG = true, PRINT_ALL = false;
+    public static final boolean DEBUG = false, PRINT_ALL = false;
     private static boolean A = true, B = true, C = true;
 
     public static void main(String[] args) {
@@ -31,6 +31,7 @@ public class Main {
     public static void demo() {
         Scanner in = new Scanner(System.in);
         System.out.println("""
+                
                 To choose an action,
                 enter the letter or number in the list.
                 Input is not case sensitive,
@@ -45,7 +46,9 @@ public class Main {
             s = in.next().toUpperCase();
             switch (s) {
                 case "A" -> {
+                    System.out.println("Initializing database...");
                     initDemoDatabase();
+                    System.out.println("Ready. What would you like to do?");
                     go = false;
                 }
                 case "B" -> {
@@ -189,7 +192,8 @@ public class Main {
         }
         try {
             Guest demoGuest = new Guest
-                    ("Yedidya", "Evenchen", "207404997","0585902496","yevenchen@gmail.com");
+                    ("Yedidya", "Evenchen","207404997",
+                            "0585902496","yevenchen@gmail.com");
             Database.data().addGuest(demoGuest);
         }catch (NullParamException e){
             System.out.println("null guest cannot be added");
@@ -216,7 +220,8 @@ public class Main {
         if(p.isEmpty()) p.add(CREDIT_CARD);
         return new Hotel(name,stars,0,top,low,high,p,p);
     }
-    public static Room randomRoom(int number, double low, double high, Hotel hotel){
+    public static Room randomRoom(int number,
+                                  double low, double high, Hotel hotel){
         ArrayList<RoomAmenity> a = new ArrayList<>();
         if(rand.nextBoolean()) a.add(new HotTub());
         if(rand.nextBoolean()) a.add(new RoomBalcony());

@@ -58,6 +58,8 @@ public class Hotel implements Accommodation {
 
     public RoomInterface suggestRoomBundle(Search search)
             throws NullParamException, NoRoomsFoundException {
+        roomsList.sort(Comparator.comparingDouble(Room::getPrice));
+        roomsList.sort(Comparator.comparingInt(Room::getBeds));
         RoomBundle bundle = new RoomBundle();
         boolean couldNotFind = false;
         // Set how many people per room:
@@ -80,9 +82,12 @@ public class Hotel implements Accommodation {
             if(!roomSuggestions.isEmpty()){
                 // If an option was found, add it to the list,
                 // and decrease that number of people from the group.
-                bundle.addRoom((Room) roomSuggestions.get(0));
-                people -= perRoom;
-                rooms--;
+                Room room = (Room) roomSuggestions.get(0);
+                if(room.getPrice()+bundle.getPrice()<=search.getHighPrice()) {
+                    bundle.addRoom((Room) roomSuggestions.get(0));
+                    people -= perRoom;
+                    rooms--;
+                }
             }else{
                 if(DEBUG) System.out.println("nothing found, decreasing perRoom");
                 // If no option was found, try again with fewer people in the room:
@@ -246,8 +251,6 @@ public class Hotel implements Accommodation {
         } else if(price>highPrice){
             highPrice = price;
         }
-        // sort rooms list by beds:
-        roomsList.sort(Comparator.comparingInt(Room::getBeds));
     }
     public void addRoom(int roomNumber, int beds, double price,
                         ArrayList<RoomAmenity> roomAmenities)

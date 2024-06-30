@@ -74,14 +74,14 @@ public class Guest implements User, Subscriber {
             return "name wasn't changed";
         }
         this.firstName = firstName;
-        return "first name changed successfully";
+        return "first name changed successfully to "+firstName;
     }
     public String setLastName(String lastName) {
         if(lastName==null){
             return "name wasn't changed";
         }
         this.lastName = lastName;
-        return "last name changed successfully";
+        return "last name changed successfully to "+lastName;
     }
     public String setID(String ID) {
         if(ID==null){
@@ -89,23 +89,23 @@ public class Guest implements User, Subscriber {
         }
         if(!Database.data().guestExists(ID)) {
             this.ID = ID;
-            return "ID changed successfully";
+            return "ID changed successfully to "+ID;
         }
         return "that ID already exists in database";
     }
     public String setPhone(String phone) {
         if(phone==null){
-            return "phone wasn't changed";
+            return "phone number wasn't changed";
         }
         this.phone = phone;
-        return "phone changed successfully";
+        return "phone number changed successfully to "+phone;
     }
     public String setEmail(String email) {
         if(email==null){
             return "email wasn't changed";
         }
         this.email = email;
-        return "email changed successfully";
+        return "email changed successfully to "+email;
     }
     public String getPhone() {
         return phone;
@@ -126,6 +126,6 @@ public class Guest implements User, Subscriber {
         return this.reminders;
     }
     public String toString(){
-        return firstName+" "+lastName+", "+ID+", "+phone;
+        return firstName+" "+lastName+", "+ID+", "+phone+", "+email;
     }
 }
