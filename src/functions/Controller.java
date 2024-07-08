@@ -209,7 +209,7 @@ public final class Controller {
         }
         if(guest!=null){
             System.out.println("Hello, "+guest.getFirstName());
-            ArrayList <String> messages = guest.getReminders();
+            LinkedList <String> messages = guest.getReminders();
             int size = messages.size();
             if(size!=0){
                 if(size==1){

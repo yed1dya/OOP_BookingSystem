@@ -6,6 +6,7 @@ import users.Reservation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class Room implements RoomInterface {
     private boolean hold;
@@ -13,7 +14,7 @@ public class Room implements RoomInterface {
     private int beds;
     private double price;
     private Hotel hotel;
-    private ArrayList<MyDate> dates;
+    private LinkedList<MyDate> dates;
     private ArrayList<RoomAmenity> roomAmenities;
     private HashMap<MyDate, Reservation> reservations;
 
@@ -24,7 +25,7 @@ public class Room implements RoomInterface {
         this.price = price;
         this.roomAmenities = new ArrayList<>();
         this.roomAmenities.addAll(roomAmenities);
-        this.dates = new ArrayList<>();
+        this.dates = new LinkedList<>();
         this.reservations = new HashMap<>();
         this.hotel = hotel;
         hold = false;
@@ -63,7 +64,7 @@ public class Room implements RoomInterface {
     public void setBeds(int beds) {
         this.beds = beds;
     }
-    public ArrayList<MyDate> getDates() {
+    public LinkedList<MyDate> getDates() {
         return dates;
     }
     public void addDate(MyDate date) {

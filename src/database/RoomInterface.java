@@ -6,6 +6,7 @@ import users.Reservation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public interface RoomInterface {
     /**
@@ -22,7 +23,7 @@ public interface RoomInterface {
     void setRoomNumber(int roomNumber);
     int getBeds();
     void setBeds(int beds);
-    ArrayList<MyDate> getDates();
+    LinkedList<MyDate> getDates();
     void addDate(MyDate date);
     void removeDate(MyDate date)
             throws NoSuchReservationException;

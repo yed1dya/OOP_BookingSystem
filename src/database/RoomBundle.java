@@ -7,6 +7,7 @@ import users.Reservation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class RoomBundle implements RoomInterface{
     private ArrayList<Room> rooms;
@@ -55,8 +56,8 @@ public class RoomBundle implements RoomInterface{
         return beds;
     }
     public void setBeds(int beds) {}
-    public ArrayList<MyDate> getDates() {
-        ArrayList<MyDate> dates = new ArrayList<>();
+    public LinkedList<MyDate> getDates() {
+        LinkedList<MyDate> dates = new LinkedList<>();
         for(Room room : rooms){
             dates.addAll(room.getDates());
         }

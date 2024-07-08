@@ -18,13 +18,13 @@ public class Hotel implements Accommodation {
     private int bottomFloor;
     private int topFloor;
     private HashMap<Integer, Room> rooms;
-    private ArrayList<Room> hotelRoomList;
+    private List<Room> hotelRoomList;
     private double lowPrice, highPrice;
     private ArrayList<Integer> paymentOptions;
     private ArrayList<Integer> refundOptions;
     private ArrayList<HotelAmenity> hotelAmenities;
     private HashMap<MyDate,Reservation> reservations;
-    private ArrayList<Subscriber> subscribers;
+    private List<Subscriber> subscribers;
 
     public Hotel(String name, int stars,
                  int bottomFloor, int topFloor,
@@ -38,7 +38,7 @@ public class Hotel implements Accommodation {
         this.lowPrice = lowPrice;
         this.highPrice = highPrice;
         this.rooms = new HashMap<>();
-        this.hotelRoomList = new ArrayList<>();
+        this.hotelRoomList = new LinkedList<>();
         this.paymentOptions = new ArrayList<>(paymentOptions);
         this.refundOptions = new ArrayList<>(refundOptions);
         this.hotelAmenities = new ArrayList<>();

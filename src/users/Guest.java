@@ -7,6 +7,7 @@ import exceptions.PaymentErrorException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class Guest implements User, Subscriber {
@@ -17,8 +18,8 @@ public class Guest implements User, Subscriber {
     private String phone;
     private String email;
     private HashMap<Integer,Reservation> reservations;
-    private ArrayList<Receipt> receipts;
-    private ArrayList<String> reminders;
+    private LinkedList<Receipt> receipts;
+    private LinkedList<String> reminders;
 
     public Guest(String firstName, String lastName, String ID, String phone, String email)
             throws GuestExistsException {
@@ -32,8 +33,8 @@ public class Guest implements User, Subscriber {
         this.email = email;
         this.reservations = new HashMap<>();
         this.search = new Search();
-        this.receipts = new ArrayList<>();
-        this.reminders = new ArrayList<>();
+        this.receipts = new LinkedList<>();
+        this.reminders = new LinkedList<>();
     }
     public HashMap<Integer,Reservation> getReservations() {
         return reservations;
@@ -113,7 +114,7 @@ public class Guest implements User, Subscriber {
     public String getEmail() {
         return email;
     }
-    public ArrayList<Receipt> getReceipts() {
+    public LinkedList<Receipt> getReceipts() {
         return receipts;
     }
     public Search getSearch() {
@@ -122,7 +123,7 @@ public class Guest implements User, Subscriber {
     public boolean hasReservation(int number){
         return reservations.containsKey(number);
     }
-    public ArrayList<String> getReminders(){
+    public LinkedList<String> getReminders(){
         return this.reminders;
     }
     public String toString(){
